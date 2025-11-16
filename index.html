@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Izumi Sushi · Menú</title>
+
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+</head>
+
+<body>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-overlay"></div>
+
+        <div class="hero-content">
+            <h1 class="hero-title">IZUMI SUSHI</h1>
+            <p class="hero-sub">Experiencia Gourmet</p>
+
+            <div class="selectors-wrapper">
+                <select id="tipoSelect" class="select-elegante"></select>
+                <select id="categoriaSelect" class="select-elegante"></select>
+            </div>
+        </div>
+    </section>
+
+    <!-- MENU -->
+    <main id="menu" class="menu"></main>
+
+    <footer class="footer">
+        © Izumi Sushi · Cocina Nikkei Premium
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>

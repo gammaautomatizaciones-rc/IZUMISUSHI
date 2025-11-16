@@ -1,0 +1,301 @@
+:root {
+    --black: #0e0e0e;
+    --deep: #1a1a1a;
+    --card: #181818;
+    --gold: #d4b16a;
+    --terracotta: #c26a42;
+    --white: #f2f2f2;
+    --text-soft: #cccccc;
+    --radius: 18px;
+    --shadow: 0 20px 40px rgba(0,0,0,0.45);
+}
+
+/* GENERAL */
+body {
+    margin: 0;
+    background: var(--black);
+    color: var(--white);
+    font-family: "Inter", sans-serif;
+}
+
+/* HERO */
+.hero {
+    height: 70vh;
+    background-image: url("img/hero.jpg");
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.75));
+}
+
+.hero-content {
+    position: relative;
+    margin-bottom: 60px;
+    text-align: center;
+    padding-top: 80px; /* PROBÁ 60–120px según gusto */
+}
+.hero-title {
+    font-size: 56px;
+    color: var(--gold);
+    font-family: "Playfair Display", serif;
+    margin-top: 80px; /* Ajustá: 20–80px según feeling */
+}
+
+
+.hero-sub {
+    margin-top: 5px;
+    color: var(--text-soft);
+}
+
+/* SELECTORES */
+.selectors-wrapper {
+    margin-top: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.select-elegante {
+    padding: 14px 22px;
+    font-size: 17px;
+    border-radius: var(--radius);
+    background: rgba(0,0,0,0.45);
+    border: 1px solid rgba(255,255,255,0.18);
+    color: var(--white);
+    backdrop-filter: blur(6px);
+    width: 300px;
+    margin: 0 auto;
+}
+
+select option {
+    background: #111;
+    color: #f2f2f2;
+}
+
+/* MENU */
+.menu {
+    max-width: 1150px;
+    margin: 50px auto;
+    padding: 0 25px;
+}
+
+.categoria-titulo {
+    font-family: "Playfair Display", serif;
+    color: var(--gold);
+    font-size: 36px;
+}
+
+/* CARDS */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 32px;
+}
+
+.card {
+    background: var(--card);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: .3s;
+}
+
+.card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.55);
+}
+
+.card img {
+    width: 100%;
+    height: 190px;
+    object-fit: cover;
+}
+
+.texto {
+    padding: 20px;
+}
+
+.texto h3 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.texto p {
+    color: var(--text-soft);
+    margin-top: 6px;
+}
+
+.precio {
+    margin-top: 10px;
+    color: var(--terracotta);
+    font-size: 22px;
+    font-weight: 600;
+}
+
+/* FOOTER */
+.footer {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-soft);
+    font-size: 14px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ==========================================================
+   RESPONSIVE IZUMI – PREMIUM ADAPTADO A TU DISEÑO
+   ========================================================== */
+
+/* ============================
+   TABLETS / MEDIO (max 1024px)
+   ============================ */
+
+@media (max-width: 1024px) {
+
+    /* HERO */
+    .hero {
+        height: 55vh;
+        background-position: center;
+    }
+
+    .hero-title {
+        font-size: 44px;
+    }
+
+    .hero-sub {
+        font-size: 16px;
+    }
+.hero-content {
+    padding-top: 40px;
+}
+
+    /* SELECT */
+    .select-categoria {
+        width: calc(100% - 2cm);
+        margin: 0 auto;
+        display: block;
+        font-size: 1rem;
+        padding: 14px 14px;
+    }
+
+    /* MENU GENERAL */
+    .menu {
+        max-width: 900px;
+    }
+
+    /* GRID */
+    .grid {
+        gap: 22px;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    }
+
+    /* CARD */
+    .card img {
+        height: 160px;
+    }
+}
+
+
+/* ============================
+   CELULAR ESTÁNDAR (max 480px)
+   ============================ */
+
+@media (max-width: 480px) {
+
+    /* HERO */
+    .hero {
+        height: 45vh;
+    }
+
+    .hero-title {
+        font-size: 34px;
+        letter-spacing: 3px;
+    }
+
+    .hero-sub {
+        font-size: 14px;
+    }
+
+    /* SELECT */
+    .select-categoria {
+        width: calc(100% - 2cm);
+        font-size: 0.95rem;
+        padding: 12px 14px;
+    }
+
+    /* TITULOS */
+    .categoria-titulo {
+        font-size: 28px;
+    }
+
+    /* GRID */
+    .grid {
+        gap: 18px;
+        grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    }
+
+    .card img {
+        height: 140px;
+    }
+
+    .texto {
+        padding: 16px;
+    }
+
+    .precio {
+        font-size: 20px;
+    }
+}
+
+
+/* ============================
+   EXTRA SMALL (max 360px)
+   ============================ */
+
+@media (max-width: 360px) {
+
+    .hero {
+        height: 40vh;
+    }
+
+    .hero-title {
+        font-size: 30px;
+    }
+
+    .select-categoria {
+        width: calc(100% - 2cm);
+        font-size: 0.9rem;
+        padding: 12px;
+    }
+
+    .grid {
+        grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+        gap: 16px;
+    }
+
+    .card img {
+        height: 120px;
+    }
+}
+
+/* ==========================================================
+   FIN RESPONSIVE IZUMI
+   ========================================================== */
