@@ -87,7 +87,7 @@ select option {
 }
 
 .cat-section {
-    /* Añadimos un poco de margen para separar categorías si se muestran varias */
+    /* Agregamos para separar categorías */
     margin-bottom: 50px; 
 }
 
@@ -100,7 +100,7 @@ select option {
 /* CARDS - CONFIGURACIÓN DE ESCRITORIO */
 .grid {
     display: grid;
-    /* Forzar 3 columnas iguales */
+    /* FORZADO a 3 columnas para evitar el espaciado desigual */
     grid-template-columns: repeat(3, 1fr);
     gap: 32px;
 }
@@ -153,6 +153,11 @@ select option {
     font-size: 14px;
 }
 
+
+/* ==========================================================
+   RESPONSIVE IZUMI – PREMIUM ADAPTADO A TU DISEÑO
+   ========================================================== */
+
 /* ============================
    TABLETS / MEDIO (max 1024px)
    ============================ */
@@ -176,7 +181,7 @@ select option {
         padding-top: 40px;
     }
 
-    /* SELECT - CORREGIDO LA CLASE A select-elegante */
+    /* SELECT */
     .select-elegante {
         width: calc(100% - 2cm);
         margin: 0 auto;
@@ -223,7 +228,7 @@ select option {
         font-size: 14px;
     }
 
-    /* SELECT - CORREGIDO LA CLASE A select-elegante */
+    /* SELECT */
     .select-elegante {
         width: calc(100% - 2cm);
         font-size: 0.95rem;
@@ -260,7 +265,21 @@ select option {
    ============================ */
 
 @media (max-width: 360px) {
-    /* ... (Reglas heredadas de 480px, solo ajustamos gap/tamaños si es necesario) ... */
+
+    .hero {
+        height: 40vh;
+    }
+
+    .hero-title {
+        font-size: 30px;
+    }
+
+    .select-elegante {
+        width: calc(100% - 2cm);
+        font-size: 0.9rem;
+        padding: 12px;
+    }
+
     .grid {
         gap: 16px;
     }
@@ -269,3 +288,7 @@ select option {
         height: 120px;
     }
 }
+
+/* ==========================================================
+   FIN RESPONSIVE IZUMI
+   ========================================================== */
