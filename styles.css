@@ -94,10 +94,14 @@ select option {
 }
 
 /* CARDS */
+
 .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 32px;
+    display: grid;
+    /* FORZAR 3 COLUMNAS IGUALES (1fr) */
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    /* Esto ayuda a centrar si el menú es más angosto que el contenedor */
+    justify-content: center; 
 }
 
 .card {
@@ -202,10 +206,11 @@ select option {
     }
 
     /* GRID */
-    .grid {
-        gap: 22px;
-        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    }
+.grid {
+        gap: 22px;
+        /* Mantener 2 columnas en tablets */
+        grid-template-columns: repeat(2, 1fr); 
+    }
 
     /* CARD */
     .card img {
@@ -247,10 +252,11 @@ select option {
     }
 
     /* GRID */
-    .grid {
-        gap: 18px;
-        grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
-    }
+.grid {
+        gap: 18px;
+        /* Forzar 1 columna en celular */
+        grid-template-columns: 1fr; 
+    }
 
     .card img {
         height: 140px;
@@ -299,3 +305,4 @@ select option {
 /* ==========================================================
    FIN RESPONSIVE IZUMI
    ========================================================== */
+
