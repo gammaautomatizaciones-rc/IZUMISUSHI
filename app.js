@@ -1,5 +1,5 @@
 // URL CSV IZUMI
-const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRNGCPSH5C80N8aS9rAbIqlTsrKHF5lGxy5yvGa9ek0WVL7Rjit6EQiZEk2736TV1gbPJKaSvlrxu-z/pub?gid=1981062211&single=true&output=csv";
+const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQGB-YIZg1GBDc312CNkTrrKtKOO5s7RkMh9qRjAG5Ez3Pq9Nokzb6ydvVayL7XFCmLKh66TaX_qI0S/pub?output=csv";
 const IMG_PATH = "img/";
 
 // Define el intervalo de actualización en milisegundos (30 segundos)
@@ -199,3 +199,4 @@ cargarMenu();
 
 // 2. Configurar la recarga periódica cada 30 segundos
 setInterval(cargarMenu, INTERVALO_ACTUALIZACION);
+
