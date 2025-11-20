@@ -21,9 +21,7 @@ body {
 /* HERO */
 .hero {
     height: 70vh;
-    background-image: url("img/hero.jpg");
-    background-size: cover;
-    background-position: center;
+    background: url("img/hero.jpg") center/cover; /* Optimización: background abreviado */
     position: relative;
     display: flex;
     align-items: flex-end;
@@ -32,7 +30,7 @@ body {
 
 .hero-overlay {
     position: absolute;
-    inset: 0;
+    inset: 0; /* Optimización: usa 'inset' en lugar de top/right/bottom/left */
     background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.75));
 }
 
@@ -40,15 +38,15 @@ body {
     position: relative;
     margin-bottom: 60px;
     text-align: center;
-    padding-top: 80px; /* PROBÁ 60–120px según gusto */
+    padding-top: 80px;
 }
+
 .hero-title {
     font-size: 56px;
     color: var(--gold);
     font-family: "Playfair Display", serif;
-    margin-top: 80px; /* Ajustá: 20–80px según feeling */
+    margin-top: 80px;
 }
-
 
 .hero-sub {
     margin-top: 5px;
@@ -93,11 +91,10 @@ select option {
     font-size: 36px;
 }
 
-/* CARDS - CORREGIDO PARA 3 COLUMNAS FIJAS */
+/* CARDS */
 .grid {
     display: grid;
-    /* *** CORRECCIÓN APLICADA AQUÍ: Se fuerza a 3 columnas para evitar el espaciado desigual. *** */
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 32px;
 }
 
@@ -149,20 +146,8 @@ select option {
     font-size: 14px;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
 /* ==========================================================
-   RESPONSIVE IZUMI – PREMIUM ADAPTADO A TU DISEÑO
+   RESPONSIVE IZUMI
    ========================================================== */
 
 /* ============================
@@ -170,8 +155,6 @@ select option {
    ============================ */
 
 @media (max-width: 1024px) {
-
-    /* HERO */
     .hero {
         height: 55vh;
         background-position: center;
@@ -184,32 +167,28 @@ select option {
     .hero-sub {
         font-size: 16px;
     }
-.hero-content {
-    padding-top: 40px;
-}
 
-    /* SELECT */
-    .select-elegante {
+    .hero-content {
+        padding-top: 40px;
+    }
+
+    .select-categoria { /* Se mantiene .select-categoria para no alterar la funcionalidad */
         width: calc(100% - 2cm);
         margin: 0 auto;
         display: block;
         font-size: 1rem;
-        padding: 14px 14px;
+        padding: 14px; /* Optimización: se compacta el padding */
     }
 
-    /* MENU GENERAL */
     .menu {
         max-width: 900px;
     }
 
-    /* GRID - CORREGIDO A 2 COLUMNAS FIJAS */
     .grid {
         gap: 22px;
-        /* *** CORRECCIÓN APLICADA AQUÍ: Se fuerza a 2 columnas. *** */
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     }
 
-    /* CARD */
     .card img {
         height: 160px;
     }
@@ -221,8 +200,6 @@ select option {
    ============================ */
 
 @media (max-width: 480px) {
-
-    /* HERO */
     .hero {
         height: 45vh;
     }
@@ -236,23 +213,19 @@ select option {
         font-size: 14px;
     }
 
-    /* SELECT */
-    .select-elegante {
+    .select-categoria { /* Se mantiene .select-categoria para no alterar la funcionalidad */
         width: calc(100% - 2cm);
         font-size: 0.95rem;
         padding: 12px 14px;
     }
 
-    /* TITULOS */
     .categoria-titulo {
         font-size: 28px;
     }
 
-    /* GRID - CORREGIDO A 1 COLUMNA FIJA */
     .grid {
         gap: 18px;
-        /* *** CORRECCIÓN APLICADA AQUÍ: Se fuerza a 1 columna. *** */
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
     }
 
     .card img {
@@ -274,7 +247,6 @@ select option {
    ============================ */
 
 @media (max-width: 360px) {
-
     .hero {
         height: 40vh;
     }
@@ -283,14 +255,14 @@ select option {
         font-size: 30px;
     }
 
-    .select-elegante {
+    .select-categoria { /* Se mantiene .select-categoria para no alterar la funcionalidad */
         width: calc(100% - 2cm);
         font-size: 0.9rem;
         padding: 12px;
     }
 
     .grid {
-        /* Se mantiene 1fr de la regla anterior, solo ajustamos el gap si es necesario */
+        grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
         gap: 16px;
     }
 
