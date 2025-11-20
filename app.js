@@ -25,19 +25,19 @@ function normalizarPrecio(valor) {
 // 🍣 CARGAR CSV (función principal de actualización)
 // ------------------------------------------------------------------
 async function cargarMenu() {
-    // Guardamos los valores seleccionados actuales antes de la recarga
-    const tipoSelect = document.getElementById("tipoSelect");
-    const catSelect = document.getElementById("categoriaSelect");
-    const selectedTipo = tipoSelect ? tipoSelect.value : '';
-    const selectedCat = catSelect ? catSelect.value : '';
+    // Guardamos los valores seleccionados actuales antes de la recarga
+    const tipoSelect = document.getElementById("tipoSelect");
+    const catSelect = document.getElementById("categoriaSelect");
+    const selectedTipo = tipoSelect ? tipoSelect.value : '';
+    const selectedCat = catSelect ? catSelect.value : '';
 
     try {
-        // Añadir Date.now() a la URL para evitar la caché de los datos CSV
+        // Añadir Date.now() a la URL para evitar la caché de los datos CSV
         const res = await fetch(SHEET_URL + "&t=" + Date.now(), { cache: "no-store" });
         
-        if (!res.ok) {
-            throw new Error(`Error al cargar el menú (HTTP ${res.status}): Verifica la URL.`);
-        }
+        if (!res.ok) {
+            throw new Error(`Error al cargar el menú (HTTP ${res.status}): Verifica la URL.`);
+        }
 
         const csv = await res.text();
         const parsed = Papa.parse(csv, { header: true });
@@ -62,15 +62,15 @@ async function cargarMenu() {
             categoriasPorTipo[t] = [...new Set(items.filter(i => i.tipo === t).map(i => i.categoria))];
         });
 
-        // Renderizar y restaurar la selección
+        // Renderizar y restaurar la selección
         renderTipoSelect(selectedTipo, selectedCat);
-    } catch (error) {
-        console.error("❌ Fallo en la carga del menú:", error);
-        const cont = document.getElementById("menu");
-        if (cont) {
-            cont.innerHTML = "<p class='error-mensaje'>No se pudo cargar el menú. Por favor, verifica la conexión.</p>";
-        }
-    }
+    } catch (error) {
+        console.error("❌ Fallo en la carga del menú:", error);
+        const cont = document.getElementById("menu");
+        if (cont) {
+            cont.innerHTML = "<p class='error-mensaje'>No se pudo cargar el menú. Por favor, verifica la conexión.</p>";
+        }
+    }
 }
 
 // ------------------------------------------------------------------
@@ -78,26 +78,26 @@ async function cargarMenu() {
 // ------------------------------------------------------------------
 function renderTipoSelect(selectedTipo = '', selectedCat = '') {
     const tipoSelect = document.getElementById("tipoSelect");
-    if (!tipoSelect) return;
+    if (!tipoSelect) return;
 
     tipoSelect.innerHTML = `<option value="">Elegí tipo</option>` +
         tipos.map(t => `<option value="${t}">${capitalizar(t)}</option>`).join("");
-    
-    // Restaurar la selección
-    tipoSelect.value = selectedTipo;
-    
-    // Adjuntar listener SÓLO una vez
-    if (!tipoListenerAttached) {
-        tipoSelect.addEventListener("change", () => {
+    
+    // Restaurar la selección
+    tipoSelect.value = selectedTipo;
+    
+    // Adjuntar listener SÓLO una vez
+    if (!tipoListenerAttached) {
+        tipoSelect.addEventListener("change", () => {
             const tipo = tipoSelect.value;
             renderCategoriaSelect(tipo);
             limpiarSecciones();
         });
-        tipoListenerAttached = true;
-    }
+        tipoListenerAttached = true;
+    }
 
-    // Si había un tipo seleccionado, re-renderizar la categoría
-    renderCategoriaSelect(selectedTipo, selectedCat);
+    // Si había un tipo seleccionado, re-renderizar la categoría
+    renderCategoriaSelect(selectedTipo, selectedCat);
 }
 
 // ------------------------------------------------------------------
@@ -105,7 +105,7 @@ function renderTipoSelect(selectedTipo = '', selectedCat = '') {
 // ------------------------------------------------------------------
 function renderCategoriaSelect(tipo, selectedCat = "") {
     const catSelect = document.getElementById("categoriaSelect");
-    if (!catSelect) return;
+    if (!catSelect) return;
 
     catSelect.innerHTML = "";
 
@@ -119,21 +119,21 @@ function renderCategoriaSelect(tipo, selectedCat = "") {
     catSelect.innerHTML = `<option value="">Elegí categoría</option>` +
         categorias.map(c => `<option value="${c}">${c}</option>`).join("");
 
-    // Restaurar la selección
-    catSelect.value = selectedCat;
+    // Restaurar la selección
+    catSelect.value = selectedCat;
 
-    // Adjuntar listener SÓLO una vez
-    if (!categoriaListenerAttached) {
+    // Adjuntar listener SÓLO una vez
+    if (!categoriaListenerAttached) {
         catSelect.addEventListener("change", () => {
             mostrarCategoria(catSelect.value);
         });
-        categoriaListenerAttached = true;
-    }
+        categoriaListenerAttached = true;
+    }
 
-    // Mostrar el menú si había una categoría seleccionada (después de la recarga)
-    if (selectedCat) {
-        mostrarCategoria(selectedCat);
-    }
+    // Mostrar el menú si había una categoría seleccionada (después de la recarga)
+    if (selectedCat) {
+        mostrarCategoria(selectedCat);
+    }
 }
 
 // ------------------------------------------------------------------
@@ -152,20 +152,23 @@ function mostrarCategoria(cat) {
 
     const filtrados = items.filter(i => i.categoria === cat);
 
+    // 1. Crear el contenedor principal de la categoría
     cont.innerHTML = `
         <div class="cat-section">
             <h2 class="categoria-titulo">${cat}</h2>
-            <div class="grid"></div>
+            <div class="grid" id="grid-${CSS.escape(cat)}"></div> 
         </div>
     `;
-
-    const grid = cont.querySelector(".grid");
+    
+    // 2. Seleccionar el grid y construir las tarjetas con append/insertAdjacentHTML
+    const grid = document.getElementById(`grid-${CSS.escape(cat)}`);
+    let cardsHTML = '';
 
     filtrados.forEach(i => {
         const tieneImg = i.imagen && i.imagen.length > 2;
-        const formattedPrice = i.precio.toLocaleString("es-AR", { minimumFractionDigits: 0 });
+        const formattedPrice = i.precio.toLocaleString("es-AR", { minimumFractionDigits: 0 });
 
-        grid.innerHTML += `
+        cardsHTML += `
             <div class="card">
                 ${tieneImg ? `<img src="${IMG_PATH + i.imagen}" alt="${i.nombre}" onerror="this.remove()">` : ""}
                 <div class="texto">
@@ -176,15 +179,17 @@ function mostrarCategoria(cat) {
             </div>
         `;
     });
+    
+    // 3. Insertar todas las tarjetas en el grid de una sola vez.
+    if (grid) {
+        grid.innerHTML = cardsHTML;
+    }
 }
 
 // Capitaliza primera letra (para tipo)
 function capitalizar(t) {
     return t.charAt(0).toUpperCase() + t.slice(1);
 }
-
-// La función 'mostrarTodo' fue eliminada ya que no se usa en la lógica de selección por Tipo/Categoría.
-// Si deseas mantenerla, puedes volver a añadirla.
 
 // ------------------------------------------------------------------
 // 🚀 INICIALIZACIÓN Y RECARGA
