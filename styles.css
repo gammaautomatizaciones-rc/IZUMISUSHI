@@ -40,14 +40,15 @@ body {
     position: relative;
     margin-bottom: 60px;
     text-align: center;
-    padding-top: 80px;
+    padding-top: 80px; /* PROBÁ 60–120px según gusto */
 }
 .hero-title {
     font-size: 56px;
     color: var(--gold);
     font-family: "Playfair Display", serif;
-    margin-top: 80px;
+    margin-top: 80px; /* Ajustá: 20–80px según feeling */
 }
+
 
 .hero-sub {
     margin-top: 5px;
@@ -86,21 +87,16 @@ select option {
     padding: 0 25px;
 }
 
-.cat-section {
-    /* Agregamos para separar categorías */
-    margin-bottom: 50px; 
-}
-
 .categoria-titulo {
     font-family: "Playfair Display", serif;
     color: var(--gold);
     font-size: 36px;
 }
 
-/* CARDS - CONFIGURACIÓN DE ESCRITORIO */
+/* CARDS - CORREGIDO PARA 3 COLUMNAS FIJAS */
 .grid {
     display: grid;
-    /* FORZADO a 3 columnas para evitar el espaciado desigual */
+    /* *** CORRECCIÓN APLICADA AQUÍ: Se fuerza a 3 columnas para evitar el espaciado desigual. *** */
     grid-template-columns: repeat(3, 1fr);
     gap: 32px;
 }
@@ -154,6 +150,17 @@ select option {
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
 /* ==========================================================
    RESPONSIVE IZUMI – PREMIUM ADAPTADO A TU DISEÑO
    ========================================================== */
@@ -177,9 +184,9 @@ select option {
     .hero-sub {
         font-size: 16px;
     }
-    .hero-content {
-        padding-top: 40px;
-    }
+.hero-content {
+    padding-top: 40px;
+}
 
     /* SELECT */
     .select-elegante {
@@ -195,10 +202,11 @@ select option {
         max-width: 900px;
     }
 
-    /* GRID - Forzar 2 columnas */
+    /* GRID - CORREGIDO A 2 COLUMNAS FIJAS */
     .grid {
         gap: 22px;
-        grid-template-columns: repeat(2, 1fr); 
+        /* *** CORRECCIÓN APLICADA AQUÍ: Se fuerza a 2 columnas. *** */
+        grid-template-columns: repeat(2, 1fr);
     }
 
     /* CARD */
@@ -240,9 +248,10 @@ select option {
         font-size: 28px;
     }
 
-    /* GRID - Forzar 1 columna */
+    /* GRID - CORREGIDO A 1 COLUMNA FIJA */
     .grid {
         gap: 18px;
+        /* *** CORRECCIÓN APLICADA AQUÍ: Se fuerza a 1 columna. *** */
         grid-template-columns: 1fr;
     }
 
@@ -281,6 +290,7 @@ select option {
     }
 
     .grid {
+        /* Se mantiene 1fr de la regla anterior, solo ajustamos el gap si es necesario */
         gap: 16px;
     }
 
