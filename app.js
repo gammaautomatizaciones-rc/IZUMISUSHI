@@ -1,197 +1,165 @@
-// URL CSV IZUMI
-const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQGB-YIZg1GBDc312CNkTrrKtKOO5s7RkMh9qRjAG5Ez3Pq9Nokzb6ydvVayL7XFCmLKh66TaX_qI0S/pub?output=csv";
+// URL CSV ACTUALIZADA
+const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQGB-YIZg1GBDc312CNkTrrKtKOO5s7RkMh9qRjAG5Ez3Pq9Nokzb6ydvVayL7XFCmLKh66TaX_qI0S/pub?gid=0&single=true&output=csv";
 const IMG_PATH = "img/";
 
 // Define el intervalo de actualización en milisegundos (30 segundos)
-const INTERVALO_ACTUALIZACION = 30000; 
+const INTERVALO_ACTUALIZACION = 30000;
 
 let items = [];
 let filtrados = [];
-let tipos = [];
-let categoriasPorTipo = {};
-// Bandera para asegurar que los listeners de change se adjunten una sola vez
-let listenersAttached = false; 
+let selectHandlerAttached = false; // Bandera para asegurar que el listener del select se adjunte solo una vez
 
-// Normalización anti-NaN
-function normalizarPrecio(valor) {
-    if (!valor) return 0;
-    let limpio = String(valor).replace(/[^0-9]/g, "").trim();
-    return Number(limpio) || 0;
-}
-
-// ------------------------------------------------------------------
-// 🍣 CARGAR CSV (función principal de actualización)
-// ------------------------------------------------------------------
+/**
+ * 🍕 CARGAR CSV
+ * Obtiene el CSV, lo parsea y llama a renderMenu.
+ * Se ejecuta al cargar la página y cada 30 segundos.
+ */
 async function cargarMenu() {
     try {
-        // Añadir Date.now() a la URL para evitar la caché de los datos CSV
+        console.log("Cargando menú desde Google Sheets...");
+        // Usamos un timestamp para forzar la no-cache de los datos.
         const res = await fetch(SHEET_URL + "&t=" + Date.now(), { cache: "no-store" });
         
-        if (!res.ok) {
-            throw new Error(`Error al cargar el menú (HTTP ${res.status}): Verifica la URL.`);
-        }
+        if (!res.ok) {
+            throw new Error(`Error al cargar el menú (HTTP ${res.status}): Asegúrate que la hoja esté publicada.`);
+        }
 
         const csv = await res.text();
+        // Papa Parse necesita estar incluido en tu HTML
         const parsed = Papa.parse(csv, { header: true });
 
+        // Guardar el valor seleccionado antes de actualizar items
+        const select = document.getElementById("categoriaSelect");
+        const selectedValue = select ? select.value : '';
+
         items = parsed.data
-            .filter(row => row.nombre && row.tipo) // aseguramos datos válidos
+            .filter(row => (row.categoria || "").trim() && (row.nombre || "").trim())
             .map(row => ({
-                tipo: (row.tipo || "").trim().toLowerCase(),
                 categoria: (row.categoria || "").trim(),
                 nombre: (row.nombre || "").trim(),
-                precio: normalizarPrecio(row.precio),
+                precio: (row.precio || "").trim(),
                 descripcion: (row.descripcion || "").trim(),
                 imagen: (row.imagen || "").trim(),
+                destacado: (row.destacado || "").trim().toLowerCase() === "si"
             }));
 
-        // Sacamos tipos únicos
-        tipos = [...new Set(items.map(i => i.tipo))];
+        filtrados = items;
 
-        // Armamos categorías por tipo
-        categoriasPorTipo = {}; // Limpiar antes de rellenar
-        tipos.forEach(t => {
-            categoriasPorTipo[t] = [...new Set(items.filter(i => i.tipo === t).map(i => i.categoria))];
-        });
+        renderMenu(selectedValue); // Pasamos el valor seleccionado para preservarlo
 
-        renderTipoSelect(true); // Pasar 'true' para indicar que es una recarga
-    } catch (error) {
-        console.error("❌ Fallo en la carga del menú:", error);
-    }
-}
-
-// ------------------------------------------------------------------
-// 🍣 RENDER SELECT TIPO
-// ------------------------------------------------------------------
-function renderTipoSelect(isReload = false) {
-    const tipoSelect = document.getElementById("tipoSelect");
-    const catSelect = document.getElementById("categoriaSelect");
-    
-    // Guardar los valores seleccionados para restaurarlos
-    const selectedTipo = isReload ? tipoSelect.value : '';
-    const selectedCat = isReload ? catSelect.value : '';
-
-
-    tipoSelect.innerHTML = `<option value="">Elegí tipo</option>` +
-        tipos.map(t => `<option value="${t}">${capitalizar(t)}</option>`).join("");
-    
-    // Restaurar selección de tipo y actualizar categoría
-    tipoSelect.value = selectedTipo;
-    
-    // Si ya se adjuntaron, no lo hagas de nuevo
-    if (!listenersAttached) {
-        tipoSelect.addEventListener("change", () => {
-            const tipo = tipoSelect.value;
-            renderCategoriaSelect(tipo);
-            limpiarSecciones();
-        });
-    }
-
-    // Si es una recarga, re-renderiza el select de categoría y muestra el menú
-    if (isReload) {
-        renderCategoriaSelect(selectedTipo, selectedCat);
-    } else {
-        // Renderizado inicial del select de categoría (vacío)
-        renderCategoriaSelect("");
-    }
-}
-
-// ------------------------------------------------------------------
-// 🍣 RENDER SELECT CATEGORÍA
-// ------------------------------------------------------------------
-function renderCategoriaSelect(tipo, selectedCat = "") {
-    const catSelect = document.getElementById("categoriaSelect");
-    catSelect.innerHTML = "";
-
-    if (!tipo) {
-        catSelect.innerHTML = `<option value="">Elegí categoría</option>`;
-        limpiarSecciones();
-        return;
+    } catch (error) {
+        console.error("❌ Fallo al obtener o parsear el menú:", error);
+        const cont = document.getElementById("menu");
+        if (cont) {
+            cont.innerHTML = "<p class='error-mensaje'>No se pudo cargar el menú. Por favor, verifica la conexión.</p>";
+        }
     }
-
-    const categorias = categoriasPorTipo[tipo];
-
-    catSelect.innerHTML = `<option value="">Elegí categoría</option>` +
-        categorias.map(c => `<option value="${c}">${c}</option>`).join("");
-    
-    // Restaurar selección de categoría
-    catSelect.value = selectedCat;
-
-    // Adjuntar listener SÓLO una vez
-    if (!listenersAttached) {
-        catSelect.addEventListener("change", () => {
-            mostrarCategoria(catSelect.value);
-        });
-        // Marcamos que los listeners de ambos selectores ya se adjuntaron
-        listenersAttached = true; 
-    }
-    
-    // Mostrar la categoría si había algo seleccionado
-    if (selectedCat) {
-        mostrarCategoria(selectedCat);
-    }
 }
 
-function limpiarSecciones() {
-    document.getElementById("menu").innerHTML = "";
-}
-
-// ------------------------------------------------------------------
-// 🍣 Muestra la categoría elegida
-// ------------------------------------------------------------------
-function mostrarCategoria(cat) {
+/**
+ * 🍔 FUNCIÓN DE RENDERIZADO
+ */
+function renderMenu(selectedValue = '') {
     const cont = document.getElementById("menu");
+    if (!cont) return;
+    
+    // El select debe estar fuera del contenedor 'menu' para que no se borre
+    const select = document.getElementById("categoriaSelect");
+    
+    // Limpiamos el contenedor del menú
     cont.innerHTML = "";
 
-    if (!cat) return;
+    const categorias = [...new Set(filtrados.map(i => i.categoria).filter(c => c))];
 
-    const filtrados = items.filter(i => i.categoria === cat);
+    // Re-renderizar las opciones del select
+    if (select) {
+        select.innerHTML = "<option value=''>Elegí una categoría</option>" +
+            categorias.map(c => `<option value="${c}">${c}</option>`).join("");
 
-    cont.innerHTML = `
-        <div class="cat-section">
-            <h2 class="categoria-titulo">${cat}</h2>
-            <div class="grid"></div>
-        </div>
-    `;
+        // Restaurar el valor seleccionado (si existe)
+        select.value = selectedValue;
 
-    const grid = cont.querySelector(".grid");
+        // Adjuntar el listener SÓLO una vez
+        if (!selectHandlerAttached) {
+            select.addEventListener("change", handleCategoryChange);
+            selectHandlerAttached = true;
+        }
+    }
 
-    filtrados.forEach(i => {
-        const tieneImg = i.imagen && i.imagen.length > 2;
-        
-        // El price ya es un Number gracias a normalizarPrecio()
-        const formattedPrice = i.precio.toLocaleString("es-AR", { minimumFractionDigits: 0 });
+    // -------------------------------------------------------
+    // CREACIÓN Y LLENADO DE SECCIONES
+    // -------------------------------------------------------
+    categorias.forEach(cat => {
+        const cleanID = cat
+            .toLowerCase()
+            .replace(/\s+/g, "-")
+            .replace(/[^\w\-]/g, "");
 
-        grid.innerHTML += `
-            <div class="card">
-                ${tieneImg ? `<img src="${IMG_PATH + i.imagen}" alt="${i.nombre}" onerror="this.remove()">` : ""}
-                <div class="texto">
-                    <h3>${i.nombre}</h3>
-                    <p>${i.descripcion}</p>
-                    <div class="precio">$${formattedPrice}</div>
-                </div>
+        // 1. Crear la estructura de la sección
+        const sectionHTML = `
+            <div class='cat-section' id='sec-${cleanID}' style='display:none;'>
+                <h2 class='categoria-titulo'>${cat}</h2>
+                <div class='grid'></div>
             </div>
         `;
+        cont.insertAdjacentHTML('beforeend', sectionHTML);
+
+        const grid = document.querySelector(`#sec-${cleanID} .grid`);
+
+        if (grid) {
+            // 2. Llenar el grid
+            filtrados
+                .filter(i => i.categoria === cat)
+                .forEach(i => {
+                    const imgHTML = i.imagen
+                        ? `<img src="${IMG_PATH}${i.imagen}" alt="${i.nombre}" onerror="this.style.display='none'">`
+                        : "";
+                    
+                    const priceValue = Number(i.precio || 0);
+                    const formattedPrice = isNaN(priceValue) ? 'Consultar' : priceValue.toLocaleString("es-AR", { minimumFractionDigits: 0 });
+
+                    grid.innerHTML += `
+                        <div class='card ${i.destacado ? 'destacado' : ''}'>
+                            ${imgHTML}
+                            <div class='texto'>
+                                <h3>${i.nombre}</h3>
+                                <p>${i.descripcion}</p>
+                                <div class='precio'>$${formattedPrice}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+        }
+        
+        // Si el valor seleccionado coincide con la categoría actual, muéstrala.
+        if (select && select.value === cat) {
+            document.getElementById("sec-" + cleanID).style.display = "block";
+        }
     });
+    
+    // Función de manejo del evento de cambio del selector (separada para el listener único)
+    function handleCategoryChange() {
+        const cat = select.value;
+        
+        document.querySelectorAll(".cat-section").forEach(sec => sec.style.display = "none");
+
+        if (!cat) return;
+        
+        const cleanID = cat
+            .toLowerCase()
+            .replace(/\s+/g, "-")
+            .replace(/[^\w\-]/g, "");
+
+        const section = document.getElementById("sec-" + cleanID);
+        if (section) {
+            section.style.display = "block";
+        }
+    }
 }
 
-// ------------------------------------------------------------------
-// 🍣 Código de Ayuda
-// ------------------------------------------------------------------
-function capitalizar(t) {
-    return t.charAt(0).toUpperCase() + t.slice(1);
-}
-
-// La función 'mostrarTodo' fue eliminada ya que no se usa en la lógica de selección por Tipo/Categoría.
-// La dejo comentada por si la necesitas:
-/*
-function mostrarTodo() {
-    // ... (código original de mostrarTodo) ...
-}
-*/
 
 // ------------------------------------------------------------------
-// 🚀 INICIALIZACIÓN Y RECARGA
+// 🚀 INICIALIZACIÓN Y ACTUALIZACIÓN AUTOMÁTICA
 // ------------------------------------------------------------------
 
 // 1. Carga inicial
@@ -199,4 +167,3 @@ cargarMenu();
 
 // 2. Configurar la recarga periódica cada 30 segundos
 setInterval(cargarMenu, INTERVALO_ACTUALIZACION);
-
